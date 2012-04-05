@@ -2,7 +2,7 @@ var Router = require('../router');
 
 describe('Router', function(){
 
-	var callback = function(){}
+	var callback = function(){ return 'callback'; }
 		router = null;
 
 	beforeEach(function(){
@@ -41,6 +41,17 @@ describe('Router', function(){
 			router.addNamedRoute('test3', '/test/:one/:dne/:two', callback);
 			var builtURL = router.buildRouteWithParams('test3', params);
 			expect(builtURL).toEqual('/test/param1//param2');
+		});
+	});
+
+	describe ('route matching', function(){
+		it ('should match a route with no parameters', function(){
+			var noParamsURL = '/some/url',
+				result = null;
+
+			router.addRoute(noParamsURL, callback);
+			result = router.matchRoute(noParamsURL);
+			expect(result()).toEqual('callback');
 		});
 	});
 });
