@@ -18,6 +18,10 @@ var RouterProto = {
 		this.nameToRoute[name] = route;
 	},
 
+	getRoute: function (route){
+		return this.routes[route];
+	},
+
 	getNamedRoute: function (routeName){
 		return this.nameToRoute[routeName];
 	},
@@ -49,12 +53,14 @@ var RouterProto = {
 
 			for (var i = 0, l = storedRouteParts.length; i < l && i < routeParts.length; i++){
 				if (routeParts[i] === storedRouteParts[i]) matches++;
+				else if (storedRouteParts[i][0] === ':') matches++;
 			}
 
-			if (matches === storedRouteParts.length) return this.routes[storedRoute];
+			if (matches === storedRouteParts.length) return storedRoute;
 
 			matches = 0;
 		}
+		return null;
 	},
 };
 

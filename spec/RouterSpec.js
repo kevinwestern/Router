@@ -53,5 +53,19 @@ describe('Router', function(){
 			result = router.matchRoute(noParamsURL);
 			expect(result()).toEqual('callback');
 		});
+		it ('should match a route that contains parms', function(){
+			var twoParamsURL = '/url/:firstname/:lastname',
+				result = null;
+
+			router.addRoute(twoParamsURL, callback);
+			result = router.matchRoute('/url/john/doe');
+			expect(result).toEqual(twoParamsURL);
+		});
+		it ('should match a route when the url does not contain enough parameters', function (){
+			var manyParamsURL = '/url/:with/:four/:params/:test',
+				testURL = '/url/two/params';
+			route.addRoute(manyParamsURL, callback);
+			expect(route.matchRoute(testURL)).toEqual(manyParamsURL);
+		});
 	});
 });
