@@ -9,6 +9,8 @@ var RouterProto = {
 	routes: {},
 	nameToRoute: {},
 
+	constructor: Router,
+
 	addRoute: function (route, callback){
 		this.routes[route] = callback;
 	},
