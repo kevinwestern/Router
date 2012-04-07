@@ -38,34 +38,4 @@ describe('Router', function(){
 			expect(builtURL).toEqual('/test/param1//param2');
 		});
 	});
-
-	describe ('route matching', function(){
-
-		it ('should match a route with no parameters', function(){
-			router.addRoute('no_params_route', '/some/url', callback);
-			expect(router.matchRoute('/some/url')).toEqual('no_params_route');
-		});
-
-		it ('should match a route that contains parms', function(){
-			router.addRoute('two_params', '/url/:firstname/:lastname', callback);
-			expect(router.matchRoute('/url/john/doe')).toEqual('two_params');
-		});
-
-		it ('should match a route with alternating parameter and non-parameter segments', function(){
-			router.addRoute('alernating_route', '/url/:with/alternating/:params', callback);
-			expect(router.matchRoute('/url/one/alternating/two')).toEqual('alernating_route');
-		});
-
-		it ('should match a route when the url does not contain enough parameters', function (){
-			router.addRoute('test_route', '/url/:with/:four/:params/:test', callback);
-			expect(router.matchRoute('/url/two/params')).toEqual('test_route');
-		});
-
-		it ('should not match a route when an alternating value does not align', function(){
-			var url = '/posts/:topic/user/:id';
-			router.addRoute('test', url, callback);
-			expect(router.matchRoute('/posts/programming/comments/5')).toBe(null);
-		});
-
-	});
 });

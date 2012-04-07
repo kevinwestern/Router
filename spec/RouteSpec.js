@@ -23,4 +23,33 @@ describe('Route class', function(){
 			expect(route.getNumParams()).toEqual(3);
 		});
 	});
+
+	describe ('route matching', function(){
+
+		it ('should match a route with no parameters', function(){
+			var route = new Router.Route('no_params_route', '/some/url', callback);
+			expect(route.urlMatches('/some/url')).toBe(true);
+		});
+
+		it ('should match a route that contains parms', function(){
+			var route = new Router.Route('two_params', '/url/:firstname/:lastname', callback);
+			expect(route.urlMatches('/url/john/doe')).toBe(true);
+		});
+
+		it ('should match a route with alternating parameter and non-parameter segments', function(){
+			var route = new Router.Route('alernating_route', '/url/:with/alternating/:params', callback);
+			expect(route.urlMatches('/url/one/alternating/two')).toBe(true);
+		});
+
+		it ('should match a route when the url does not contain enough parameters', function (){
+			var route = new Router.Route('test_route', '/url/:with/:four/:params/:test', callback);
+			expect(route.urlMatches('/url/two/params')).toBe(true);
+		});
+
+		it ('should not match a route when an alternating value does not align', function(){
+			var url = '/posts/:topic/user/:id';
+			var route = new Router.Route('test', url, callback);
+			expect(route.urlMatches('/posts/programming/comments/5')).toBe(false);
+		});
+	});
 });
