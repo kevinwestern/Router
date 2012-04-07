@@ -46,12 +46,10 @@ Route.prototype = {
 			numMatchedSegments = 0;
 
 		for (var i = 0, l = selfSegments.length; i < l && i < matchSegments.length; i++){
-			if (matchSegments[i] === selfSegments[i]) numMatchedSegments++;
-			else if (selfSegments[i][0] === ':') numMatchedSegments++;
+			if (matchSegments[i] !== selfSegments[i] && selfSegments[i][0] !== ':') return false;
 		}
 
-		if (numMatchedSegments === selfSegments.length) return true;
-		return false;
+		return true;
 	}
 }
 

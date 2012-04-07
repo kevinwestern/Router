@@ -58,7 +58,14 @@ describe('Router', function(){
 
 		it ('should match a route when the url does not contain enough parameters', function (){
 			router.addRoute('test_route', '/url/:with/:four/:params/:test', callback);
-			//expect(router.matchRoute('/url/two/params')).toEqual('/url/:with/:four/:params/:test');
+			expect(router.matchRoute('/url/two/params')).toEqual('test_route');
 		});
+
+		it ('should not match a route when an alternating value does not align', function(){
+			var url = '/posts/:topic/user/:id';
+			router.addRoute('test', url, callback);
+			expect(router.matchRoute('/posts/programming/comments/5')).toBe(null);
+		});
+
 	});
 });
