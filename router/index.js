@@ -1,36 +1,34 @@
 var has = function(self, prop){ return Object.prototype.hasOwnProperty.call(self, prop); };
 
-var Router = function(){
-	this.routes = {};
-	this.nameToRoute = {};
-};
-var RouterProto = {
+var Route = function (name, url, callback){
+	this.name = name;
+	this.url = url;
+	this.callback = callback;
+	this.numParams = this.getNumParams(this.url);
+}
 
-	routes: {},
-	nameToRoute: {},
+Route.prototype = {
+	numParams: -1,
+	name: '',
+	url: '',
+	callback: function(){},
 
-	constructor: Router,
+	constructor: Route,
 
-	addRoute: function (route, callback){
-		this.routes[route] = callback;
+	getUrl: function(){
+		return this.url;
 	},
 
-	addNamedRoute: function (name, route, callback){
-		this.addRoute(route, callback);
-		this.nameToRoute[name] = route;
+	getNumParams: function (url){
+		if (this.numParams !== -1) return this.numParams;
+		var params = 0;
+		url.replace(/\/:\w+/gi, function(){ params++; });
+
+		return this.numParams = params;
 	},
 
-	getRoute: function (route){
-		return this.routes[route];
-	},
-
-	getNamedRoute: function (routeName){
-		return this.nameToRoute[routeName];
-	},
-
-	buildRouteWithParams: function (routeName, params){
-		var route = this.getNamedRoute(routeName),
-			self = this,
+	injectParams: function (params){
+		var route = this.url,
 			paramsLength = params.length,
 			url = route.replace(/\/:\w+/gi, function(param){
 				param = param.substring(2);
@@ -42,30 +40,53 @@ var RouterProto = {
 		return url;
 	},
 
-	matchRoute: function (route){
-		var routeParts = route.split('/'),
-			storedRouteParts = [],
-			matches = 0,
-			self = this;
+	urlMatches: function (urlToMatch){
+		var matchSegments = urlToMatch.split('/'),
+			selfSegments = this.getUrl().split('/'),
+			numMatchedSegments = 0;
 
-		if (this.routes[route]) return this.routes[route];
-		for (var storedRoute in this.routes){
-			if (!has(this.routes, storedRoute)) continue;
-			storedRouteParts = storedRoute.split('/');
+		for (var i = 0, l = selfSegments.length; i < l && i < matchSegments.length; i++){
+			if (matchSegments[i] === selfSegments[i]) numMatchedSegments++;
+			else if (selfSegments[i][0] === ':') numMatchedSegments++;
+		}
 
-			for (var i = 0, l = storedRouteParts.length; i < l && i < routeParts.length; i++){
-				if (routeParts[i] === storedRouteParts[i]) matches++;
-				else if (storedRouteParts[i][0] === ':') matches++;
-			}
+		if (numMatchedSegments === selfSegments.length) return true;
+		return false;
+	}
+}
 
-			if (matches === storedRouteParts.length) return storedRoute;
+var Router = function(){
+	this.routes = {};
+	this.nameToRoute = {};
+};
+var RouterProto = {
 
-			matches = 0;
+	routes: {},
+	constructor: Router,
+
+	addRoute: function (name, route, callback){
+		this.routes[name] = new Route(name, route, callback);
+	},
+
+	getRoute: function (name){
+		return this.routes[name];
+	},
+
+	buildRouteWithParams: function (routeName, params){
+		return this.routes[routeName].injectParams(params);		
+	},
+
+	matchRoute: function (url){
+		for (var routeName in this.routes){
+			if (!has(this.routes, routeName)) continue;
+			if (this.routes[routeName].urlMatches(url)) return routeName;
 		}
 		return null;
 	},
 };
 
 Router.prototype = RouterProto;
+
+Router.Route = Route;
 
 module.exports = Router;
