@@ -52,6 +52,20 @@ Route.prototype = {
 		return true;
 	},
 
+	extractParamsFromUrl: function (url){
+		var matchSegments = url.split('/'),
+			selfSegments = this.getUrl().split('/'),
+			params = {};
+
+		for (var i = 0; i < matchSegments.length && i < selfSegments.length; i++){
+			if (selfSegments[i][0] === ':'){
+				params[selfSegments[i].substring(1)] = matchSegments[i];
+			}
+		}
+
+		return params;
+	},
+
 	toLiteral: function (){
 		return {name: this.name, url: this.url, callback: this.callback};
 	}

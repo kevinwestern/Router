@@ -83,4 +83,15 @@ describe('Route class', function(){
 			expect(route.urlMatches('/posts/programming/comments/5')).toBe(false);
 		});
 	});
+
+	describe ('extractParamsFromUrl', function (){
+		it ('should return a hash of parameters whose values are parameters from the url', function (){
+			var url = '/posts/:topic/comments/:id',
+				route = new Router.Route('test', url, callback),
+				testRoute = '/posts/health/comments/121',
+				expected = {topic: 'health', id: '121'};
+
+			expect(route.extractParamsFromUrl(testRoute)).toEqual(expected);
+		});
+	});
 });
