@@ -24,6 +24,37 @@ describe('Route class', function(){
 		});
 	});
 
+	describe ('inject params', function (){
+
+		var params = {
+			one: 'param1',
+			two: 'param2'
+		};
+
+		it ('should return a url with parameters supplied by params',function() {
+			var route = new Router.Route('test1', '/test/:one/:two', callback);
+			expect(route.injectParams(params)).toEqual('/test/param1/param2');
+		});
+
+		it ('should remove named params when named url params exceed passed params', function (){
+			var route = new Router.Route('test2', '/test/:one/:two/:three', callback);
+			var builtURL = route.injectParams(params);
+			expect(builtURL).toEqual('/test/param1/param2');
+		});
+
+		it ('should fill unmatched params with an empty string when passed params exceeds url params', function(){
+			var route = new Router.Route('test3', '/test/:one/:dne/:two', callback);
+			var builtURL = route.injectParams(params);
+			expect(builtURL).toEqual('/test/param1//param2');
+		});
+
+		it ('should not care about alternating parameters and static values', function(){
+			var route = new Router.Route('test4', '/url/:one/alternating/:two', callback);
+			expect(route.injectParams(params)).toEqual('/url/param1/alternating/param2');
+		});
+
+	});
+
 	describe ('route matching', function(){
 
 		it ('should match a route with no parameters', function(){
