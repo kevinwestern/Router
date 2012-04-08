@@ -99,6 +99,10 @@ var RouterProto = {
 		}
 		return null;
 	},
+
+	extractParams: function (routeName, url){
+		return this.routes[routeName].extractParamsFromUrl(url);
+	}
 };
 
 Router.prototype = RouterProto;
