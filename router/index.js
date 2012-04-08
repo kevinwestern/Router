@@ -50,6 +50,10 @@ Route.prototype = {
 		}
 
 		return true;
+	},
+
+	toLiteral: function (){
+		return {name: this.name, url: this.url, callback: this.callback};
 	}
 }
 
@@ -67,7 +71,7 @@ var RouterProto = {
 	},
 
 	getRoute: function (name){
-		return this.routes[name];
+		return this.routes[name].toLiteral();
 	},
 
 	buildRouteWithParams: function (routeName, params){
